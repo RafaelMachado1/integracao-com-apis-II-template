@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ButtonNome, DeleteButton, ButtonContainer, MainContainer, InputContainer, SaveButton, CloseButton } from './style'
-import {AiOutlineDelete} from 'react-icons/ai'
+import { AiOutlineDelete } from 'react-icons/ai'
 import { Input } from "../../Appstyle";
 
 export const EditarUsuario = (props) => {
@@ -17,7 +17,7 @@ export const EditarUsuario = (props) => {
         `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users/${props.id}`,
         {
           headers: {
-            Authorization: "ana-sammi-barbosa",
+            Authorization: "rafael-machado-barbosa",
           },
         }
       )
@@ -35,45 +35,50 @@ export const EditarUsuario = (props) => {
     getDadosUsuario();
   }, []);
 
-  const editaUsuario = () => {
+  const editaUsuario = async () => {
     const body = {
-        name,
-        email
-      };
-      axios
+      name,
+      email
+    };
+
+    try {
+      await axios
         .put(
           `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users/${usuario.id}`,
           body,
           {
             headers: {
-              Authorization: "ana-sammi-barbosa"
+              Authorization: "rafael-machado-barbosa"
             }
           }
         )
-        .then(() => {
-          getDadosUsuario();
-          setEditar(!editar)
-        });
+      getDadosUsuario();
+      setEditar(!editar)
+    }
+    catch (erro) {
+      console.log(erro.response)
+    }
   }
 
-  const deletarUsuario = () => {
-    axios
-      .delete(
-        `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users/${usuario.id}`,
-        {
-          headers: {
-            Authorization: "ana-sammi-barbosa"
+  const deletarUsuario = async () => {
+    try {
+      await axios
+        .delete(
+          `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users/${usuario.id}`,
+          {
+            headers: {
+              Authorization: "rafael-machado-barbosa"
+            }
           }
-        }
-      )
-      .then(() => {
-        alert("usuario removido");
-        // chama de novo o get usuarios pra atualizar a lista
-        props.getUsuarios();
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
+        )
+
+      alert("usuario removido");
+      // chama de novo o get usuarios pra atualizar a lista
+      props.getUsuarios();
+    }
+    catch (err) {
+      console.log(err.response);
+    };
   };
 
 
@@ -82,15 +87,15 @@ export const EditarUsuario = (props) => {
 
       {editar ? (
         <InputContainer>
-        <Input placeholder="Nome" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <SaveButton onClick={editaUsuario}>Salvar</SaveButton>
-        <CloseButton onClick={() => setEditar(!editar)}>Fechar</CloseButton>
+          <Input placeholder="Nome" value={name} onChange={(e) => setName(e.target.value)} />
+          <Input placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <SaveButton onClick={editaUsuario}>Salvar</SaveButton>
+          <CloseButton onClick={() => setEditar(!editar)}>Fechar</CloseButton>
         </InputContainer>
       ) : (
         <ButtonContainer>
           <ButtonNome onClick={() => setEditar(!editar)}>{usuario.name}</ButtonNome>
-          <DeleteButton onClick={deletarUsuario}><AiOutlineDelete/></DeleteButton>
+          <DeleteButton onClick={deletarUsuario}><AiOutlineDelete /></DeleteButton>
         </ButtonContainer>
       )}
     </MainContainer>
